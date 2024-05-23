@@ -1,0 +1,46 @@
+spring:
+  application.name: springboot-azure
+  cosmos:
+    uri: https://localhost:8081
+    key: C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
+    database: LocalDB
+    max-degree-parallelism: 1
+## azure table-storage starts here
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:2181
+      group-id: kafka-logger-v1-listener-group-local
+      retryMaxIntervalSecs : 4
+      maxElapsedTime : 10
+      retryInitialIntervalSecs : 10
+      username : "$ConnectionString"
+      password : keyvault
+      max-fetch-bytes: 500000
+application:
+  deleteTableTask:
+    timeout: 25 #25 ms
+    interval: "0 0/10 * * * *"
+    tableRetention: 2 # mentioned in weeks
+  eventHubNamespaces:
+    - index : 0
+      name: local-kafka
+      bootstrap-servers:  localhost:2181
+      consumerConcurrency: 1
+      username : "$ConnectionString"
+      password : keyvault
+      tableStorage-connection-string: keyvault
+      topics:
+        - name: todos-topic
+          table: todoItemw
+          consumerConcurrency: 2
+          msgType: json #msgType can be fixed, XML
+          fields:
+            - path: $['name']
+              column: PartitionKey
+            - path: $['completed']
+              column: completed
+
+configuration:
+  max-retry: 10
+  initial-interval: 200
+  multiplier: 2

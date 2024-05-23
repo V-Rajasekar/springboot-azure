@@ -1,0 +1,89 @@
+spring:
+  application.name: springboot-azure
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 5
+      idle-timeout: 10000
+  jpa:
+    properties:
+      hibernate:
+        format_sql: false
+    show-sql: false
+  cosmos:
+    uri: https://localhost:8081
+    key: C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
+    database: LocalDB
+    max-degree-parallelism: 1
+## azure table-storage starts here
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:2181
+      group-id: kafka-logger-v1-listener-group-local
+      retryMaxIntervalSecs: 4
+      maxElapsedTime: 10
+      retryInitialIntervalSecs: 10
+      pollTimeout: 900000
+      request-timeout: 60000
+      session-timeout: 60000
+      username: "$ConnectionString"
+      password: keyvault
+      login-module: org.apache.kafka.common.security.plain.PlainLoginModule
+      sasl-mechanism: PLAIN
+      security-protocol: SASL_SSL
+      truststore-location:
+      truststore-password:
+      offset-auto-reset: earliest
+      concurrency: 1
+      client-config-id:
+      max-fetch-bytes-overall: 17039360 # ~100 MB
+      max-fetch-bytes-per-partition: 1048576 # ~8 MB
+      metadata-max-age: 180000
+      metadata-max-idle: 180000
+      enable-auto-commit: false
+      max-poll-interval: 900000
+      max-poll-records: 100
+    producer:
+      bootstrap-servers:
+        - localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks-config: 1
+      linger: 0
+      request-timeout: 60000
+      metadata-max-idle: 180000
+      metadata-max-age: 180000
+      batch-size: 16384
+      send-buffer: 131072
+application:
+  deleteTableTask:
+    timeout: 25 #25 ms
+    interval: "0 0/10 * * * *"
+    tableRetention: 2 # mentioned in weeks
+  eventHubNamespaces:
+    - index : 0
+      name: local-kafka
+      bootstrap-servers:  localhost:2181
+      consumerConcurrency: 1
+      username : "$ConnectionString"
+      password : keyvault
+      tableStorage-connection-string: keyvault
+      topics:
+        - name: todos-topic
+          table: todoItemw
+          consumerConcurrency: 2
+          msgType: json #msgType can be fixed, XML
+          fields:
+            - path: $['name']
+              column: PartitionKey
+            - path: $['completed']
+              column: completed
+
+configuration:
+  max-retry: 10
+  initial-interval: 200
+  multiplier: 2
