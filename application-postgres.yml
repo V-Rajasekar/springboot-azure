@@ -71,7 +71,7 @@ application:
       consumerConcurrency: 1
       username : "$ConnectionString"
       password : keyvault
-      tableStorage-connection-string: keyvault
+      tableStorage-connection-string: http://127.0.0.1:10002
       topics:
         - name: todos-topic
           table: todoItemw
