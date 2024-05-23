@@ -5,6 +5,8 @@ spring:
     key: C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
     database: LocalDB
     max-degree-parallelism: 1
+  table-storage:
+    connection-string: http://127.0.0.1:10002
 ## azure table-storage starts here
   kafka:
     consumer:
@@ -28,7 +30,7 @@ application:
       consumerConcurrency: 1
       username : "$ConnectionString"
       password : keyvault
-      tableStorage-connection-string: keyvault
+      tableStorage-connection-string: http://127.0.0.1:10002
       topics:
         - name: todos-topic
           table: todoItemw
@@ -39,7 +41,14 @@ application:
               column: PartitionKey
             - path: $['completed']
               column: completed
-
+applicationcreds:
+  eventHubNamespaces:
+    - password:
+      tableStorage-connection-string: http://127.0.0.1:10002
+tablestoragelogging:
+  enabled: true
+postgreslogging:
+  enabled: false
 configuration:
   max-retry: 10
   initial-interval: 200
