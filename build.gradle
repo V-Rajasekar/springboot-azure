@@ -15,6 +15,9 @@ repositories {
 	mavenCentral()
 }
 
+ext {
+	junitJupiterVersion = '5.7.0'
+}
 /*ext {
 	set('springCloudAzureVersion', "5.11.0")
 }*/
@@ -23,13 +26,36 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'com.azure.spring:spring-cloud-azure-starter-data-cosmos:5.10.0'
 	implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.2.0'
+
 	implementation 'io.micrometer:micrometer-core:1.12.3'
 	implementation 'io.micrometer:micrometer-registry-prometheus:1.12.3'
 	implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
 	implementation 'org.apache.commons:commons-collections4:4.4'
 	implementation 'org.apache.commons:commons-lang3:3.14.0'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	//
+	implementation 'com.azure:azure-data-tables:12.3.13'
+	implementation 'com.jayway.jsonpath:json-path:2.9.0'
+	implementation 'org.springframework.kafka:spring-kafka'
+	implementation 'org.springframework:spring-core:6.1.4'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.postgresql:postgresql:42.7.2'
+	implementation 'org.yaml:snakeyaml:2.2'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.apache.kafka:kafka_2.13:2.8.1:test'
+	testImplementation 'org.apache.kafka:kafka-clients:2.8.1:test'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:' + junitJupiterVersion
+
+	testImplementation ('org.springframework.kafka:spring-kafka-test') {
+		// needed if downgrading to Apache Kafka 2.8.1
+		exclude group: 'org.apache.zookeeper', module: 'zookeeper'
+	}
+
+	testImplementation ('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
 }
 
 /*dependencyManagement {
